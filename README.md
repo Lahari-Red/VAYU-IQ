@@ -60,9 +60,6 @@ This is a prototype. I was deliberate about *not* faking credibility:
 - **LLM features are genuinely live in the Claude artifact preview** — "Explain this attribution", multilingual advisories, inspector briefs, and Ask VAYU call Claude (`claude-sonnet-4-6`) through the in-app endpoint. Every call has a **rich deterministic fallback**, so if the model is unreachable (e.g. when deployed externally without an API key) the feature still returns a sensible answer and **nothing breaks**. To make the LLM features live on an external deploy, route them through a tiny serverless proxy that injects your `ANTHROPIC_API_KEY` (don't ship a key in the client).
 - **Production data connectors are stubbed by design.** The architecture targets OpenAQ / CAAQMS (readings), Sentinel-5P TROPOMI (NO₂), NASA FIRMS (fires), Open-Meteo / ERA5 (meteorology), OSM / Bhuvan (land use), WorldPop / Census (exposure). Swapping the seeded engine for these feeds is the path to v1.
 
-## Deliberately out of scope
-
-Per the brief's own "do not build" list, this prototype does not include IoT/hardware, user auth, payments, real-time websockets, a native mobile app, or blockchain. The focus is the decision-support loop.
 
 
 
