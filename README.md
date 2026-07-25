@@ -64,21 +64,8 @@ This is a prototype. I was deliberate about *not* faking credibility:
 
 Per the brief's own "do not build" list, this prototype does not include IoT/hardware, user auth, payments, real-time websockets, a native mobile app, or blockchain. The focus is the decision-support loop.
 
----
 
-## Repo structure
 
-```
-index.html        ← the deliverable: single self-contained file (open or deploy this)
-app.jsx           ← editable React source (no build needed to run index.html)
-styles.css        ← editable stylesheet
-build.sh          ← regenerates index.html from app.jsx + styles.css
-```
 
-`index.html` is assembled from `app.jsx` (transpiled with Babel's classic JSX runtime to match the React UMD global) and `styles.css`. To edit, change the source files and run `./build.sh`.
 
-## Suggested demo arc
 
-Delhi → Command Center (show the closed loop + clock) → Attribution (Anand Vihar, "Explain this") → Forecast (the persistence backtest) → Enforcement (generate brief → **Dispatch — start clock**) → Health (flip languages) → Planner (suppress biomass, watch the curve drop) → Multi-City → Architecture.
-
-*Built with React, Leaflet, and Claude. Tech stack chosen so the whole thing is one file you can open anywhere.*
