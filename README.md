@@ -24,12 +24,6 @@ python3 -m http.server 8080  # then visit http://localhost:8080
 
 No build step or install is required to *run* `index.html`.
 
-## Deploy
-
-It's a static file — drag `index.html` onto **Vercel**, **Netlify**, or **Cloudflare Pages**, or push to GitHub Pages. Done.
-
----
-
 ## What's in the prototype
 
 Eight modules, all navigable from the left rail:
