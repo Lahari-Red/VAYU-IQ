@@ -2,15 +2,11 @@
 
 **From monitoring to intervention — source-attributed, forecast-aware, enforcement-ready.**
 
-India has invested heavily in air quality infrastructure, with 900+ CAAQMS stations already streaming readings across the country. What's missing isn't data, it's the layer that turns a reading into a decision. Today, when AQI spikes in a ward, there's no system that tells an official *why* it spiked, *how long* it will last, or *what specific action* would reduce it fastest. The result is a response cycle that stretches to days when it should take minutes.
-
-VAYU-IQ is built to close exactly that gap. The entire platform is organized around one loop, and every module exists to serve some part of it:
+India has the sensors (900+ CAAQMS stations) but no intelligence layer that turns a reading into an *action*. VAYU-IQ closes that loop:
 
 > **signal → source attribution → recommended action → dispatch → measured response time**
 
-Instead of stopping at visualization, VAYU-IQ tries to walk all the way through this loop: it identifies where a signal is coming from, forecasts where it's heading, recommends what to do about it, tracks who was dispatched, and measures how quickly the intervention actually happened. That last part, the measured response time, is what turns this from a dashboard into an accountability tool.
-
-This repository is a working, single-file prototype that runs the full decision-support arc end-to-end across five major Indian cities: Delhi, Mumbai, Bengaluru, Chennai, and Kolkata.
+This repository is a working single-file prototype that runs the full decision-support arc for five cities (Delhi, Mumbai, Bengaluru, Chennai, Kolkata).
 
 ---
 
@@ -28,11 +24,7 @@ python3 -m http.server 8080  # then visit http://localhost:8080
 
 No build step or install is required to *run* `index.html`.
 
----
-
 ## What's in the prototype
-
-The prototype is organized into eight modules, all accessible from the left navigation rail. Each one maps to a distinct stage of the signal-to-intervention loop.
 
 | Module | What it does |
 |---|---|
@@ -49,20 +41,19 @@ The prototype is organized into eight modules, all accessible from the left navi
 
 ## Honesty notes (please read before judging the numbers)
 
-This is a prototype, and we were deliberate about not manufacturing false credibility around it. A few things worth being upfront about:
+This is a prototype. I was deliberate about *not* faking credibility:
 
-- **The underlying data is seeded demo data.** It's generated deterministically, meaning it's identical on every load, using city-specific baselines, a realistic diurnal cycle, autocorrelated drift, and added noise to mimic real sensor behavior. It is **not** live API data, and every screen in the prototype is clearly labelled `seeded demo data` so this is never ambiguous.
-
-- **The forecast benchmark is real arithmetic, computed at runtime, not a hardcoded number.** The forecasting model itself combines a smoothed diurnal profile, an AR(1) residual term, and a small meteorology adjustment. It's fit on a 48-hour training window, with the final 24 hours held out for evaluation. RMSE is computed separately for the model and for a simple persistence baseline (essentially, "tomorrow will look like today," carrying the last observed value forward). The displayed improvement figure is `1 − model_RMSE / persistence_RMSE`, calculated live rather than asserted. This has been verified to outperform the persistence baseline across all 30 wards and all 3 forecast lead times. The margin looks large partly because flat persistence is a genuinely weak baseline against a strong diurnal cycle, that's expected, and we've labelled the baseline precisely so the comparison stays honest rather than inflated.
-
-- **Attribution confidence is a transparent agreement heuristic, not a claim of statistical precision.** Confidence rises when multiple independent signals, like satellite NO₂ readings, fire counts, and industrial proximity, corroborate the same dominant source. The interface states this explicitly rather than implying a false level of certainty.
-
----
+- **Data is seeded demo data**, generated deterministically (same every load) with city-specific baselines, a realistic diurnal cycle, autocorrelated drift, and noise. It is **not** live API data. Every screen is labelled `seeded demo data`.
+- **The forecast benchmark is real arithmetic, not a hardcoded number.** The model (smoothed diurnal profile + AR(1) residual + small meteorology adjustment) is fit on a 48h train window; the last 24h are held out; RMSE is computed for the model **and** for the persistence baseline ("tomorrow = today", last value carried forward). The displayed improvement is `1 − model_RMSE / persistence_RMSE`, computed at runtime. It is verified to beat persistence across all 30 wards × 3 lead times. The margin is large because flat persistence is a genuinely weak baseline against a strong diurnal cycle — that's expected, and the baseline is labelled precisely so the comparison is honest.
+- **Attribution confidence is a transparent agreement heuristic**, not a precision claim. It rises when independent signals (satellite NO₂, fire counts, industrial proximity) corroborate the dominant source. The UI says so explicitly.
 
 ## What's live vs. stubbed
 
-- **The LLM-powered features are genuinely live** in the Claude artifact preview. "Explain this attribution," multilingual citizen advisories, inspector briefs, and the Ask VAYU assistant all call Claude (`claude-sonnet-4-6`) through the in-app endpoint. Every one of these calls has a rich, deterministic fallback built in, so if the model is ever unreachable (for example, if this is deployed externally without an API key), the feature still returns a sensible, usable answer and nothing breaks.
+- **LLM features are genuinely live in the Claude artifact preview** — "Explain this attribution", multilingual advisories, inspector briefs, and Ask VAYU call Claude (`claude-sonnet-4-6`) through the in-app endpoint. Every call has a **rich deterministic fallback**, so if the model is unreachable (e.g. when deployed externally without an API key) the feature still returns a sensible answer and **nothing breaks**. To make the LLM features live on an external deploy, route them through a tiny serverless proxy that injects your `ANTHROPIC_API_KEY` (don't ship a key in the client).
+- **Production data connectors are stubbed by design.** The architecture targets OpenAQ / CAAQMS (readings), Sentinel-5P TROPOMI (NO₂), NASA FIRMS (fires), Open-Meteo / ERA5 (meteorology), OSM / Bhuvan (land use), WorldPop / Census (exposure). Swapping the seeded engine for these feeds is the path to v1.
 
-  To make these LLM features live on an external deployment, route them through a small serverless proxy that injects your `ANTHROPIC_API_KEY` server-side. Never ship an API key directly in client-side code.
 
-- **Production data connectors are intentionally stubbed at this stage.** The architecture is designed to plug into OpenAQ and CAAQMS for readings, Sentinel-5P TROPOMI for NO₂, NASA FIRMS for fire detection, Open-Meteo or ERA5 for meteorology, OSM or Bhuvan for land use, and WorldPop or Census data for population exposure. Swapping the current seeded engine for these live feeds is the defined path toward a production-ready v1.
+
+
+
+
