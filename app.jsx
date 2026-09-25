@@ -1,10 +1,6 @@
 const { useState, useEffect, useRef, useMemo, useCallback } = React;
 
-/* ============================================================================
-   VAYU-IQ — Air-quality intelligence layer (demo build)
-   Single-file prototype. Seeded deterministic data + computed forecast model.
-   LLM features call the in-artifact Anthropic endpoint with graceful fallback.
-   ========================================================================== */
+
 
 /* ---------- deterministic PRNG (so every demo load is identical) ---------- */
 function mulberry32(seed) {
